@@ -3,14 +3,16 @@ import requests
 import os
 import cohere
 import time
+from elevenlabs import generate, play, set_api_key, save, Voice, VoiceSettings
 
-openai_api_key = os.environ["OPENAI_API_KEY"]
-cohere_api_key = os.environ["COHERE_API_KEY"]
+openai_api_key = "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"
+cohere_api_key = "MG9DGn2ktjrnjZBmJ9OskQpp8GJrexu44yvulKUu"
+set_api_key("0a25b0d39eeab112228d8ebd735425f1")
 
 def encode_image(image_path):
-  with open(image_path, "rb") as image_file:
-    return base64.b64encode(image_file.read()).decode('utf-8')
-  
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode('utf-8')
+    
 def get_image_description(image_path):
 
     # Getting the base64 string
@@ -58,10 +60,14 @@ def get_narraration(text):
     return_likelihoods='NONE')
     return ('Prediction: {}'.format(response.generations[0].text))
 
-start = time.time()
 desc = get_image_description("IMG_5562.JPG")
-start2 = time.time()
-print("openai image caption time", start2 - start)
 narration = get_narraration(desc)
-print("cohere image caption time", time.time() - start2)
-print(narration)
+
+voice = generate(
+    text=narration[12:],
+    voice= Voice(
+        voice_id = 'GEM8FZRZ0Q7qZPaI8pju',
+        settings=VoiceSettings(stability=0.3, similarity_boost=0.5, style=0.25, use_speaker_boost=True)
+    )
+)
+save(voice,'./audio/test.mp3')

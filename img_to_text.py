@@ -5,9 +5,10 @@ import cohere
 import time
 from elevenlabs import generate, play, set_api_key, save, Voice, VoiceSettings
 
-openai_api_key = "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"
-cohere_api_key = "MG9DGn2ktjrnjZBmJ9OskQpp8GJrexu44yvulKUu"
-set_api_key("0a25b0d39eeab112228d8ebd735425f1")
+openai_api_key = os.environ["OPENAI_API_KEY"]
+cohere_api_key = os.environ["COHERE_API_KEY"]
+elevenlabs_api_key = os.environ["ELEVENLABS_API_KEY"]
+set_api_key(elevenlabs_api_key)
 
 def encode_image(image_path):
     with open(image_path, "rb") as image_file:

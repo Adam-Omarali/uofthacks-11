@@ -11,4 +11,4 @@ async def root():
 
 @app.get("/sound")
 async def get_sound():
-    return FileResponse("./audio/test.mp3", media_type="audio/mp3")
+    return FileResponse("./audio/test.wav", media_type="audio/wav")

@@ -7,17 +7,16 @@ from elevenlabs import generate, play, set_api_key, save, Voice, VoiceSettings
 
 openai_api_key = os.environ["OPENAI_API_KEY"]
 cohere_api_key = os.environ["COHERE_API_KEY"]
-elevenlabs_api_key = os.environ["ELEVENLABS_API_KEY"]
-set_api_key(elevenlabs_api_key)
+set_api_key("0a25b0d39eeab112228d8ebd735425f1")
 
 def encode_image(image_path):
     with open(image_path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode('utf-8')
     
-def get_image_description(image_path):
+def get_image_description():
 
     # Getting the base64 string
-    base64_image = encode_image(image_path)
+    base64_image = encode_image("/Users/ericmao/Documents/uofthacks/uploaded_images/test.jpg")
 
     headers = {
     "Content-Type": "application/json",
@@ -47,6 +46,7 @@ def get_image_description(image_path):
     }
 
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
+    print(response.json())
     return response.json()["choices"][0]["message"]["content"]
 
 def get_narraration(text):
@@ -61,14 +61,17 @@ def get_narraration(text):
     return_likelihoods='NONE')
     return ('Prediction: {}'.format(response.generations[0].text))
 
-desc = get_image_description("IMG_5562.JPG")
-narration = get_narraration(desc)
-
-voice = generate(
-    text=narration[12:],
-    voice= Voice(
-        voice_id = 'GEM8FZRZ0Q7qZPaI8pju',
-        settings=VoiceSettings(stability=0.3, similarity_boost=0.5, style=0.25, use_speaker_boost=True)
-    )
-)
-save(voice,'./audio/test.mp3')
+def process_image():
+        desc = get_image_description()
+        narration = get_narraration(desc)
+        
+        voice = generate(
+            text=narration[12:],
+            voice=Voice(
+                voice_id='GEM8FZRZ0Q7qZPaI8pju',
+                settings=VoiceSettings(stability=0.3, similarity_boost=0.5, style=0.25, use_speaker_boost=True)
+            )
+        )
+        audio_file_path = '/Users/ericmao/Documents/uofthacks/uofthacks-11/audio/test.mp3'
+        save(voice, audio_file_path)
+        return audio_file_path

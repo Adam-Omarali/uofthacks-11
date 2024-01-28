@@ -1,8 +1,10 @@
 import base64
+import subprocess
 import requests
 import os
 import cohere
 import time
+from pydub import AudioSegment
 from elevenlabs import generate, play, set_api_key, save, Voice, VoiceSettings
 
 openai_api_key = os.environ["OPENAI_API_KEY"]
@@ -71,4 +73,8 @@ voice = generate(
         settings=VoiceSettings(stability=0.3, similarity_boost=0.5, style=0.25, use_speaker_boost=True)
     )
 )
+
 save(voice,'./audio/test.mp3')
+
+subprocess.call(['ffmpeg', '-i', './audio/test.mp3', '-acodec', 'pcm_s16le','-ar','8000','-ac','1','./audio/test.wav'])
+subprocess.call(['ffmpeg', '-i', './audio/test.wav', '-b:a', '16k', './audio/test2.wav'])
